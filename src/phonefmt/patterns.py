@@ -28,6 +28,13 @@ COUNTRY_FORMATS = (
     CountryFormat("FR", "France", "33", (9,), trunk_prefix="0"),
     CountryFormat("AU", "Australia", "61", (9,), trunk_prefix="0"),
     CountryFormat("IN", "India", "91", (10,), trunk_prefix="0"),
+    CountryFormat("JP", "Japan", "81", (9, 10), trunk_prefix="0"),
+    CountryFormat("NL", "Netherlands", "31", (9,), trunk_prefix="0"),
+    # Italian landline numbers keep their leading 0 even in E.164 form, so
+    # unlike the others above there's no trunk prefix to strip.
+    CountryFormat("IT", "Italy", "39", (9, 10)),
+    CountryFormat("ES", "Spain", "34", (9,)),
+    CountryFormat("MX", "Mexico", "52", (10,)),
 )
 
 COUNTRY_FORMATS_BY_KEY = {fmt.key: fmt for fmt in COUNTRY_FORMATS}

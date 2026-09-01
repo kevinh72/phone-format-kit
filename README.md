@@ -71,8 +71,9 @@ branch on which one it's dealing with.
 
 ## Supported formats
 
-Currently: US/Canada (NANP), UK, Germany, France, Australia, India. Add more
-by appending a `CountryFormat` to `COUNTRY_FORMATS` in `patterns.py`.
+Currently: US/Canada (NANP), UK, Germany, France, Australia, India, Japan,
+Netherlands, Italy, Spain, Mexico. Add more by appending a `CountryFormat`
+to `COUNTRY_FORMATS` in `patterns.py`.
 
 ## License
 
