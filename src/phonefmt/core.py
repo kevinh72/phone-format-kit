@@ -69,3 +69,50 @@ def normalize(raw: str, default_country: Optional[str] = None) -> Optional[str]:
 
     fmt = classify(digits)
     return f"+{digits}" if fmt else None
+
+
+def _generic_groups(length: int) -> List[int]:
+    """Group digits into 3s, with the last group absorbing any remainder.
+
+    Used when a CountryFormat doesn't specify national_groups, or when the
+    number's length doesn't match the length that grouping was written for.
+    """
+    if length <= 4:
+        return [length]
+    whole, remainder = divmod(length, 3)
+    groups = [3] * whole
+    groups[-1] += remainder
+    return groups
+
+
+def format_national(raw: str, default_country: Optional[str] = None) -> Optional[str]:
+    """Render a phone number in a space-grouped, national (no country code) style.
+
+    Accepts the same inputs as `normalize`. Returns None wherever `normalize`
+    would, since a number that can't be classified can't be grouped either.
+
+    The grouping is a readable approximation, not the official convention for
+    every country (some, like Germany, don't have one fixed shape) - see
+    `CountryFormat.national_groups`.
+    """
+    e164 = normalize(raw, default_country=default_country)
+    if e164 is None:
+        return None
+
+    digits = e164[1:]
+    fmt = classify(digits)
+    if fmt is None:
+        return None
+
+    local = fmt.trunk_prefix + digits[len(fmt.calling_code):]
+    if fmt.national_groups is not None and sum(fmt.national_groups) == len(local):
+        groups = list(fmt.national_groups)
+    else:
+        groups = _generic_groups(len(local))
+
+    pieces = []
+    pos = 0
+    for size in groups:
+        pieces.append(local[pos:pos + size])
+        pos += size
+    return " ".join(pieces)

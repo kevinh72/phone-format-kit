@@ -6,7 +6,7 @@ list covering enough countries to be useful, meant to be extended in place.
 """
 
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Optional, Tuple
 
 
 @dataclass(frozen=True)
@@ -16,25 +16,39 @@ class CountryFormat:
     calling_code: str  # digits only, no leading '+', e.g. "1"
     national_lengths: Tuple[int, ...]  # valid lengths of the number after the calling code
     trunk_prefix: str = ""  # digit(s) dropped from a locally-dialed number, e.g. "0"
+    # How to group the locally-dialed digits (trunk prefix + national number)
+    # for readable pretty-printing, e.g. (3, 4, 4) for "020 7946 0958". Only
+    # covers the shortest entry in national_lengths; anything else falls back
+    # to a generic grouping. None where the grouping varies too much by area
+    # code to be worth guessing at (format_national() falls back for these).
+    national_groups: Optional[Tuple[int, ...]] = None
 
 
 # Ordered by calling code length isn't required here since none of these
 # calling codes are a prefix of another, but classify() sorts defensively
 # anyway in case that stops being true as more countries are added.
 COUNTRY_FORMATS = (
-    CountryFormat("US", "United States / Canada (NANP)", "1", (10,)),
-    CountryFormat("GB", "United Kingdom", "44", (10,), trunk_prefix="0"),
+    CountryFormat("US", "United States / Canada (NANP)", "1", (10,), national_groups=(3, 3, 4)),
+    CountryFormat(
+        "GB", "United Kingdom", "44", (10,), trunk_prefix="0", national_groups=(3, 4, 4)
+    ),
+    # German area codes run 2-5 digits, so there's no single grouping worth
+    # asserting here; format_national() falls back to a generic split.
     CountryFormat("DE", "Germany", "49", (10, 11), trunk_prefix="0"),
-    CountryFormat("FR", "France", "33", (9,), trunk_prefix="0"),
-    CountryFormat("AU", "Australia", "61", (9,), trunk_prefix="0"),
+    CountryFormat(
+        "FR", "France", "33", (9,), trunk_prefix="0", national_groups=(2, 2, 2, 2, 2)
+    ),
+    CountryFormat(
+        "AU", "Australia", "61", (9,), trunk_prefix="0", national_groups=(2, 4, 4)
+    ),
     CountryFormat("IN", "India", "91", (10,), trunk_prefix="0"),
     CountryFormat("JP", "Japan", "81", (9, 10), trunk_prefix="0"),
     CountryFormat("NL", "Netherlands", "31", (9,), trunk_prefix="0"),
     # Italian landline numbers keep their leading 0 even in E.164 form, so
     # unlike the others above there's no trunk prefix to strip.
     CountryFormat("IT", "Italy", "39", (9, 10)),
-    CountryFormat("ES", "Spain", "34", (9,)),
-    CountryFormat("MX", "Mexico", "52", (10,)),
+    CountryFormat("ES", "Spain", "34", (9,), national_groups=(3, 3, 3)),
+    CountryFormat("MX", "Mexico", "52", (10,), national_groups=(3, 3, 4)),
 )
 
 COUNTRY_FORMATS_BY_KEY = {fmt.key: fmt for fmt in COUNTRY_FORMATS}

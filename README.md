@@ -30,6 +30,20 @@ normalize("020 7946 0958", "GB")      # "+442079460958"
 normalize("not a phone number")       # None
 ```
 
+Render a number in a readable local style instead of E.164:
+
+```python
+from phonefmt import format_national
+
+format_national("+442079460958")       # "020 7946 0958"
+format_national("415-555-0100", "US")  # "415 555 0100"
+```
+
+The grouping is an approximation - a handful of countries (US, GB, France,
+Australia, Spain, Mexico) get a shape matching real convention, everything
+else falls back to grouping digits in 3s. It's meant for skimmable output,
+not for reproducing exactly what a phone company would print.
+
 Pull every phone-number-looking substring out of a blob of text:
 
 ```python
