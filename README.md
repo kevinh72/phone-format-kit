@@ -83,6 +83,20 @@ grep phone support-tickets.log | python scan.py
 already-open file object, or `None` for stdin — the caller doesn't need to
 branch on which one it's dealing with.
 
+Save the results instead of printing them:
+
+```python
+from phonefmt import read_numbers, write_csv, write_json
+
+hits = list(read_numbers("contacts.txt", default_country="US"))
+write_csv(hits, "contacts.csv")
+write_json(hits, "contacts.json")
+```
+
+Both accept a path or an already-open writable file, matching the input
+side. Numbers that couldn't be resolved are kept in the output (empty field
+in CSV, `null` in JSON) rather than silently dropped.
+
 ## Supported formats
 
 Currently: US/Canada (NANP), UK, Germany, France, Australia, India, Japan,

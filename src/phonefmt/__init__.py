@@ -1,6 +1,7 @@
 """phonefmt: find and normalize phone numbers in text, without a numbering-plan dependency."""
 
 from .core import classify, extract_candidates, format_national, normalize
+from .export import write_csv, write_json
 from .io import iter_lines, read_numbers
 from .patterns import COUNTRY_FORMATS, COUNTRY_FORMATS_BY_KEY, CountryFormat
 
@@ -13,6 +14,8 @@ __all__ = [
     "normalize",
     "iter_lines",
     "read_numbers",
+    "write_csv",
+    "write_json",
     "CountryFormat",
     "COUNTRY_FORMATS",
     "COUNTRY_FORMATS_BY_KEY",
